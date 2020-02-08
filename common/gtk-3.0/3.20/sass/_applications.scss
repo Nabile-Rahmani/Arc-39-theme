@@ -104,7 +104,7 @@ terminal-window,
   @extend %linked;
 
   // from .linked:not(.vertical).path-bar > button:hover in _common.scss
-  &:hover { background-color: lighten($header_button_bg, 15%); }
+  &:hover { background-color: mix($selected_bg_color, $header_button_bg, 25%); }
 
   &:active, &:checked { @include button(header-active); }
 
@@ -212,7 +212,7 @@ $disk_space_free: darken($bg_color, 3%);
 
       @include button(header-hover);
 
-      &:hover { background-color: lighten($header_button_bg, 15%); }
+      &:hover { background-color: mix($selected_bg_color, $header_button_bg, 25%); }
       &:active, &:checked { @include button(header-active); }
       &:disabled { color: transparentize($header_fg, 0.4); }
 
@@ -286,7 +286,7 @@ $disk_space_free: darken($bg_color, 3%);
   border-color: $base_color;  // disable borders, making them transparent doesn't work for some reason
 
   &:hover {
-    background-color: mix($fg_color, $base_color, 7%);
+    background-color: mix($selected_bg_color, $base_color, 25%);
 
     &:selected {
       color: $selected_fg_color;

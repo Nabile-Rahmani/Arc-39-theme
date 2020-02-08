@@ -131,7 +131,7 @@
   //
     color: $fg_color;
     border-color: $button_border;
-    background-color: lighten($button_bg, 5%);
+    background-color: mix($selected_bg_color, $button_bg, 25%);
   }
 
   @else if $t==active {
@@ -181,7 +181,7 @@
   //
     color: $header_fg;
     border-color: $header_button_border;
-    background-color: $header_button_bg;
+    background-color: mix($selected_bg_color, $header_button_bg, 25%);
   }
 
   @else if $t==header-active {
@@ -227,7 +227,7 @@
   //
     color: $osd_fg_color;
     border-color: $osd_button_border;
-    background-color: opacify(lighten($osd_button_bg, 7%), 0.1);
+    background-color: opacify(mix($selected_bg_color, $osd_button_bg, 25%), 0.1);
   }
 
   @else if $t==osd-active {

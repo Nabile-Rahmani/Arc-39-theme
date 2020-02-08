@@ -275,7 +275,7 @@ entry {
     margin: 0 -6px;
     border-radius: 0;
     border-width: 0 0 2px;
-    border-color: $selected_bg_color;
+    border-color: $control_color;
     border-style: solid;
     background-image: none;
     background-color: transparent;
@@ -735,7 +735,7 @@ modelbutton.flat {
 
   @extend %undecorated_button;
 
-  &:hover { background-color: if($variant=='light', mix($fg_color,$bg_color,5%), mix($fg_color,$bg_color,10%)); }
+  &:hover { background-color: if($variant=='light', mix($fg_color,$bg_color,5%), mix($selected_bg_color,$bg_color,25%)); }
   &:active, &:selected { &, arrow { @extend %selected_items; } }
   &:checked { color: $fg_color; }
 
@@ -1166,7 +1166,7 @@ headerbar {
     }
 
     progress {
-      border-color: $selected_bg_color;
+      border-color: $control_color;
       background-image: none;
       background-color: transparent;
     }
@@ -1231,7 +1231,7 @@ headerbar {
   }
 
   // Reset buttons
-  .linked:not(.vertical):not(.path-bar):not(.nautilus-path-bar) > button {
+  .linked:not(.vertical):not(.path-bar):not(.nautilus-path-bar):not(.stack-switcher) > button {
     &, &:hover, &:active, &:checked, &:disabled {
       border-radius: 3px;
       border-style: solid;
@@ -1251,9 +1251,11 @@ headerbar {
   .linked:not(.vertical).path-bar {
 
     > button {
-      @include button(header-hover);
+      color: $header_fg;
+      border-color: $header_button_border;
+      background-color: $header_button_bg;
 
-      &:hover { background-color: lighten($header_button_bg, 15%); }
+      &:hover { background-color: mix($selected_bg_color, $header_button_bg, 25%); }
       &:active, &:checked { @include button(header-active); }
       &:disabled { color: transparentize($header_fg, 0.4); }
 
@@ -1303,9 +1305,9 @@ headerbar {
     caret-color: $selected_fg_color;
     }
     button {
-      &,&:disabled { @include button(header-hover); }
+      &,&:disabled { @include button(header-hover); } // NOTE: This might be wrong as it assumes a background colour as opposed to a selected one, and this is supposedly disabled.
 
-      &:hover { background-color: lighten($header_button_bg, 15%); }
+      &:hover { background-color: mix($selected_bg_color, $header_button_bg, 25%); }
       &:active, &:checked { @include button(header-active); }
       &:disabled { color: transparentize($header_fg, 0.4); }
     }
@@ -1394,8 +1396,8 @@ headerbar {
         border-color: $_slider_border;
       }
       &:active {
-        background-color: $selected_bg_color;
-        border-color: $selected_bg_color;
+        background-color: $control_color;
+        border-color: $control_color;
       }
       &:disabled {
         background-color: mix($_slider_bg, $header_bg, 70%);
@@ -1510,12 +1512,13 @@ treeview.view {
   &.progressbar, &.progressbar:focus { // progress bar in treeviews
     color: $selected_fg_color;
     border-radius: 3px;
-    background-color: $selected_bg_color;
+    background-color: $control_color;
+    text-shadow: -1px -1px $bg_color, 0px -1px $bg_color, 1px -1px $bg_color, 1px 0px $bg_color, 1px 1px $bg_color, 0px 1px $bg_color, -1px 1px $bg_color, -1px 0px $bg_color;
 
     &:selected, &:selected:focus {
-      color: $selected_bg_color;
       box-shadow: none;
       background-color: $selected_fg_color;
+      text-shadow: -1px -1px $selected_bg_color, 0px -1px $selected_bg_color, 1px -1px $selected_bg_color, 1px 0px $selected_bg_color, 1px 1px $selected_bg_color, 0px 1px $selected_bg_color, -1px 1px $selected_bg_color, -1px 0px $selected_bg_color;
     }
   }
   &.trough { // progress bar trough in treeviews
@@ -1690,7 +1693,7 @@ menu,
       border-top: 1px solid mix($fg_color, $base_color, 10%);
       -gtk-icon-source: -gtk-icontheme('pan-down-symbolic');
     }
-    &:hover { background-color: mix($fg_color, $base_color, 10%); }
+    &:hover { background-color: mix($selected_bg_color, $base_color, 25%); }
     &:disabled {
       color: transparent;
       background-color: transparent;
@@ -1921,7 +1924,7 @@ scrollbar {
     background-clip: padding-box;
     background-color: mix($fg_color, $bg_color, 40%);
 
-    &:hover { background-color: mix($fg_color, $bg_color, 30%); }
+    &:hover { background-color: mix($selected_bg_color, $bg_color, 70%); }
 
     &:hover:active { background-color: $selected_bg_color;}
 
@@ -2152,7 +2155,7 @@ scale {
       background-color: lighten($osd_bg_color, 7%);
 
       highlight {
-        background-color: $selected_bg_color;
+        background-color: $control_color;
 
         &:disabled {  }
       }
@@ -2167,9 +2170,9 @@ scale {
       background-color: transparentize(black, 0.8);
 
       highlight {
-        background-color: $selected_fg_color;
+        background-color: $control_color;
 
-        &:disabled { background-color: mix($selected_fg_color, $selected_bg_color, 55%); }
+        &:disabled { background-color: mix($selected_fg_color, $control_color, 55%); }
       }
 
       &:disabled { background-color: transparentize(black, 0.9); }
@@ -2179,16 +2182,16 @@ scale {
   // The colored part of trough
   highlight {
     border-radius: 2.5px;
-    background-color: $selected_bg_color;
+    background-color: $control_color;
 
-    &:disabled { background-color: transparentize($selected_bg_color, 0.45); }
+    &:disabled { background-color: transparentize($control_color, 0.45); }
   }
 
   // this is another differently styled part of the trough, the most relevant use case is for example
   // in media player to indicate how much video stream as been cached
   fill {
     border-radius: 2.5px;
-    background-color: transparentize($selected_bg_color, 0.5);
+    background-color: transparentize($control_color, 0.5);
 
     &:disabled { background-color: transparent; }
   }
@@ -2207,8 +2210,8 @@ scale {
 
     &:active {
       background-clip: border-box;
-      background-color: $selected_bg_color;
-      border-color: $selected_bg_color;
+      background-color: $control_color;
+      border-color: $control_color;
     }
 
     &:disabled {
@@ -2229,29 +2232,29 @@ scale {
         border-color: mix($selected_fg_color, $selected_bg_color, 85%);
       }
       &:active {
-        background-color: mix($selected_fg_color, $selected_bg_color, 50%);
-        border-color: mix($selected_fg_color, $selected_bg_color, 50%);
+        background-color: mix($selected_fg_color, $control_color, 50%);
+        border-color: mix($selected_fg_color, $control_color, 50%);
       }
       &:disabled{
-        background-color: mix($selected_fg_color, $selected_bg_color, 55%);
-        border-color: mix($selected_fg_color, $selected_bg_color, 55%);
+        background-color: mix($selected_fg_color, $control_color, 55%);
+        border-color: mix($selected_fg_color, $control_color, 55%);
       }
     }
 
     // OSD sliders
     .osd & {
       background-clip: border-box;
-      background-color: $selected_bg_color;
-      border-color: $selected_bg_color;
+      background-color: $control_color;
+      border-color: $control_color;
 
       &:hover {
-        background-color: lighten($selected_bg_color, 10%);
-        border-color: lighten($selected_bg_color, 10%)
+        background-color: lighten($control_color, 10%);
+        border-color: lighten($control_color, 10%)
       }
 
       &:active {
-        background-color: darken($selected_bg_color, 10%);
-        border-color: darken($selected_bg_color, 10%);
+        background-color: darken($control_color, 10%);
+        border-color: darken($control_color, 10%);
       }
 
       &:disabled {  }
@@ -2325,7 +2328,7 @@ progressbar {
   }
   // Moving bit
   progress {
-    background-color: $selected_bg_color;
+    background-color: $control_color;
     border: none;
     border-radius: 3px;
     box-shadow: none; //needed for clipping
@@ -2368,8 +2371,8 @@ levelbar {
   &.vertical.discrete block { margin: 1px 0; }
 
   block:not(.empty) {
-    border: 1px solid $selected_bg_color;
-    background-color: $selected_bg_color;
+    border: 1px solid $control_color;
+    background-color: $control_color;
     border-radius: 2px;
   }
   block.low {
@@ -2377,8 +2380,8 @@ levelbar {
     background-color: $warning_color;
   }
   block.high {
-    border-color: $selected_bg_color;
-    background-color: $selected_bg_color;
+    border-color: $control_color;
+    background-color: $control_color;
   }
   block.full {
     border-color: $success_color;

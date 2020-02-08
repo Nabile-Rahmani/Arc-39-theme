@@ -128,7 +128,7 @@ StScrollBar {
     border: 0px solid;
     margin: 0px;
 
-    &:hover { background-color: mix($fg_color, $bg_color, 30%); }
+    &:hover { background-color: mix($selected_bg_color, $bg_color, 70%); }
 
     &:active { background-color: $selected_bg_color; }
   }
@@ -141,7 +141,7 @@ StScrollBar {
   -slider-height: 4px;
   -slider-background-color: $button_border;                   //background of the trough
   -slider-border-color: transparentize(black, 1);             //trough border color
-  -slider-active-background-color: $selected_bg_color;        //active trough fill
+  -slider-active-background-color: $control_color;        //active trough fill
   -slider-active-border-color: transparentize(black, 1);      //active trough border
   -slider-border-width: 0;
   -slider-handle-radius: 0px;
@@ -729,10 +729,10 @@ StScrollBar {
     height: 4px;
     background-color: transparentize(black, 0.5);
     border-radius: 2px;
-    color: $selected_bg_color;
+    color: $control_color;
   }
   .level-bar {
-    background-color: $selected_bg_color;
+    background-color: $control_color;
     border-radius: 2px;
   }
 }
