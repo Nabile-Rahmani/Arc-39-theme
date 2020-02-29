@@ -32,7 +32,7 @@ This should be compatible with GTK 2, GTK 3.20+, and GNOME Shell 3.18 through 3.
 - Since GTK 2 only looks at `~/.themes` for user theme files, you'll want to do either of these things:
 
     - `ln -s ~/.local/share/themes ~/.themes` to symlink the XDG themes folder to the user's folder.
-    - Rebuild with `./autogen.sh --prefix=$HOME/.themes` to move the theme's destination to where GTK 2 will check for files.
+    - Move `~/.local/share/themes/Arc-39` into the `~/.themes` folder.
 
 - The generated makefiles don't seem to watch for `.scss` changes to update the `.css` files when rebuilding.
 

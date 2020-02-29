@@ -69,21 +69,20 @@ style "default" {
   GtkIMHtmlr::hyperlink-color = @link_color
   GtkIMHtml::hyperlink-color = @link_color
   GtkWidget::link-color = @link_color
-  GtkWidget::visited-link-color = @text_color
+  GtkWidget::visited-link-color = @visited_link_color
 
   # Colors
-
   bg[NORMAL] = @bg_color
-  bg[PRELIGHT] = shade (1.02, @bg_color)
+  bg[PRELIGHT] = mix(0.25, @selected_bg_color, @bg_color)
   bg[SELECTED] = @selected_bg_color
   bg[INSENSITIVE] = @insensitive_bg_color
-  bg[ACTIVE] = shade (0.9, @bg_color)
+  bg[ACTIVE] = @selected_bg_color
 
-  fg[NORMAL] = @text_color
+  fg[NORMAL] = @fg_color
   fg[PRELIGHT] = @fg_color
   fg[SELECTED] = @selected_fg_color
   fg[INSENSITIVE] = @insensitive_fg_color
-  fg[ACTIVE] = @fg_color
+  fg[ACTIVE] = @selected_fg_color
 
   text[NORMAL] = @text_color
   text[PRELIGHT] = @text_color
@@ -92,10 +91,10 @@ style "default" {
   text[ACTIVE] = @selected_fg_color
 
   base[NORMAL] = @base_color
-  base[PRELIGHT] = shade (0.95, @bg_color)
+  base[PRELIGHT] = mix(0.25, @selected_bg_color, @base_color)
   base[SELECTED] = @selected_bg_color
   base[INSENSITIVE] = @bg_color
-  base[ACTIVE] = shade (0.9, @selected_bg_color)
+  base[ACTIVE] = @selected_bg_color
 
   # For succinctness, all reasonable pixmap options remain here
 
@@ -970,9 +969,8 @@ style "button" {
 
 style "checkbutton" {
 
-  fg[PRELIGHT] = @text_color
-  fg[ACTIVE] = @text_color
-
+  fg[PRELIGHT] = @fg_color
+  fg[ACTIVE] = @fg_color
 }
 
 style "entry" {
@@ -1064,10 +1062,8 @@ style "notebook_entry" {
   }
 }
 
-style "notebook_tab_label" {
-
- fg[ACTIVE] = @text_color
-
+style "notebook_tab_label" = "text" {
+  fg[ACTIVE] = @fg_color # We also need to avoid changing fg color for the inactive notebook tab labels
 }
 
 style "combobox_entry"
@@ -1224,8 +1220,6 @@ style "notebook_combobox_entry" {
 style "combobox_entry_button"
 {
   xthickness = 6
-
-  fg[ACTIVE] = @text_color
 
   engine "pixmap" {
 
@@ -2253,6 +2247,9 @@ style "menu_text" = "menu_item" {
   engine "murrine" { textstyle = 0 }
 }
 
+style "checkbutton_text" = "checkbutton" {
+  engine "murrine" { textstyle = 0 }
+}
 
 style "null" {
 
@@ -2305,9 +2302,6 @@ widget_class "*<GtkNotebook>*<GtkEventBox>*<GtkEntry>"                      styl
 widget_class "*<GtkNotebook>*<GtkComboBoxEntry>*<GtkEntry>"                 style "notebook_combobox_entry"
 widget_class "*<GtkNotebook>*<GtkEventBox>*<GtkComboBoxEntry>*<GtkEntry>"   style "combobox_entry"
 
-# We also need to avoid changing fg color for the inactive notebook tab labels
-widget_class "*<GtkNotebook>.<GtkLabel>"                            style "notebook_tab_label"
-
 # GTK tooltips
 widget "gtk-tooltip*"                                               style "tooltips"
 
@@ -2345,5 +2339,7 @@ widget "xfwm4-tabwin*GtkButton*"                                    style "xfwm-
 widget_class "*<GtkLabel>"                                          style "text"
 widget_class "*<GtkMenu>*<GtkLabel>"                                style "menu_text" 
 widget_class "*<GtkComboBox>*<GtkCellLayout>"                       style "text"
-widget_class "*<GtkNotebook>*<GtkLabel>"                            style "text"
+widget_class "*<GtkNotebook>.<GtkLabel>"                            style "notebook_tab_label" # NOTE: Styles aren't additive, so the last one for a given class match overrides all the others. Care must be taken to properly order these matches, and inherit or redefine the properties of the overriden styles to get the correct visuals. A couple wrong things with this: firstly, GTK is using fg[ACTIVE] for *inactive* tabs, so naturally it looks wrong (thanks, geniuses). Secondly, you can't match "<Notebook>.<Label>" (or any other widget combination), simply because the tabs don't seem to immediately follow the notebook, so you effectively can't theme them unless you use a glob pattern which would ruin absolutely everything else inside notebooks (i.e. buttons' labels). Thus, this is unfixable.
 widget_class "*<GtkNotebook>*<GtkCellLayout>"                       style "text"
+#widget_class "*<GtkCheckButton>*<GtkLabel>"                         style "checkbutton_text" # Supposed to fix active checkbox/radio labels using the "default" style's white FG colour. But, you see, there are these things which look exactly like a GtkButton but are in fact a GtkCheckButton, to allow for a depressed state. And those do need the white FG over the pink BG. Applying this "fix" would sacrifice them, so I just won't.
+# Also, if you're using GTK theming for Qt apps (QT_QPA_PLATFORMTHEME=gtk2), you'll notice that some of those issues don't exist there, though things like buttons' or list entries' labels don't use fg[ACTIVE] and such, that's just because of how Qt decides to use the GTK 2 theme values. Lovely, isn't it ?
